@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="2026 학사일정 대시보드 — 기말고사, 방학, 신청기간 등 한눈에 확인">
+  <title>2026 학사일정 대시보드</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+  <div class="loading-overlay" id="loading">
+    <div class="spinner" aria-hidden="true"></div>
+  </div>
+
+  <div class="app">
+    <header class="header">
+      <div>
+        <div class="header-badge">Academic Calendar 2026</div>
+        <h1 class="header-title">2026 학사일정</h1>
+        <p class="header-sub">Google Sheets 데이터 기반 · 일정을 한눈에 확인하세요</p>
+      </div>
+      <div class="header-right">
+        <div class="today-box">
+          <div class="today-label">Today</div>
+          <div class="today-date" id="todayDate">—</div>
+          <div class="today-weekday" id="todayWeekday">—</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="stats" aria-label="일정 요약">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">—</div>
+        <div class="stat-label">전체 일정</div>
+      </div>
+      <div class="stat-card stat-card--active">
+        <div class="stat-value" id="statOngoing">—</div>
+        <div class="stat-label">진행 중</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statUpcoming">—</div>
+        <div class="stat-label">예정</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statPast">—</div>
+        <div class="stat-label">종료</div>
+      </div>
+    </section>
+
+    <div class="main-grid">
+      <section class="panel" aria-label="월간 캘린더">
+        <div class="panel-header">
+          <h2 class="panel-title">월간 캘린더</h2>
+          <div class="calendar-nav">
+            <button class="cal-btn" id="calPrev" aria-label="이전 달">‹</button>
+            <span class="cal-month-label" id="calMonthLabel">—</span>
+            <button class="cal-btn" id="calNext" aria-label="다음 달">›</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="calendar-grid" id="calGrid"></div>
+        </div>
+      </section>
+
+      <aside class="panel" aria-label="일정 하이라이트">
+        <div class="panel-header">
+          <h2 class="panel-title">진행 중</h2>
+        </div>
+        <div class="panel-body">
+          <div class="highlight-list" id="nowList"></div>
+        </div>
+        <div class="panel-header" style="border-top:1px solid var(--border)">
+          <h2 class="panel-title">다가오는 일정</h2>
+        </div>
+        <div class="panel-body">
+          <div class="highlight-list" id="soonList"></div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="panel timeline-section" aria-label="타임라인">
+      <div class="panel-header">
+        <h2 class="panel-title">일정 타임라인</h2>
+        <span style="font-size:0.8125rem;color:var(--text-muted)">기간별 겹침 한눈에 보기</span>
+      </div>
+      <div class="timeline-chart">
+        <div class="timeline-axis" id="timelineAxis"></div>
+        <div id="timelineRows"></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="전체 일정 목록">
+      <div class="panel-header">
+        <h2 class="panel-title">전체 일정</h2>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">전체</button>
+        <button class="filter-btn" data-filter="ongoing">진행 중</button>
+        <button class="filter-btn" data-filter="upcoming">예정</button>
+        <button class="filter-btn" data-filter="past">종료</button>
+        <div class="search-box">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input type="search" id="searchInput" placeholder="일정 검색..." aria-label="일정 검색">
+        </div>
+      </div>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>일정명</th>
+              <th>기간</th>
+              <th>일수</th>
+              <th>기간 비율</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:20px" aria-label="선택한 날짜 상세">
+      <div class="panel-header">
+        <h2 class="panel-title">날짜별 상세</h2>
+        <span style="font-size:0.8125rem;color:var(--text-muted)">캘린더에서 날짜를 클릭하세요</span>
+      </div>
+      <div class="panel-body" id="dayDetail"></div>
+    </section>
+
+    <footer class="footer">
+      <p>
+        데이터 출처:
+        <a href="https://docs.google.com/spreadsheets/d/1deEPZBc5Hl5zGZllZ6gSIjwYhmH_WpSxciyh9X0g9nA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">
+          2026_학사일정 Google Sheets
+        </a>
+      </p>
+    </footer>
+  </div>
+
+  <div class="day-tooltip" id="dayTooltip" role="tooltip"></div>
+
+  <script src="/dashboard.js"></script>
+</body>
+</html>
