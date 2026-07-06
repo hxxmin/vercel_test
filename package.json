@@ -1,0 +1,14 @@
+{
+  "name": "robotics-ai-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Intelligent Robotics · SLAM 연구자 정적 자기소개 사이트",
+  "scripts": {
+    "dev": "serve . -l 3000",
+    "start": "serve . -l 3000",
+    "preview": "serve . -l 4173"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
