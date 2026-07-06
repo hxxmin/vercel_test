@@ -1,6 +1,5 @@
 {
-  "version": 2,
-  "name": "vercel-test",
-  "builds": [{ "src": "index.html", "use": "@vercel/static" }],
-  "routes": [{ "src": "/(.*)", "dest": "/$1" }]
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": "."
 }
